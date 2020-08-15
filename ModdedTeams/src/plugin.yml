@@ -1,0 +1,8 @@
+main: me.Latestion.Teams.Main
+author: Latestion
+version: 1.0
+name: KenXTeams
+
+commands:
+  Teams:
+    aliases: team
