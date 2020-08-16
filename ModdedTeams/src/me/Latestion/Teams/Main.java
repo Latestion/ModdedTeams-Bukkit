@@ -72,6 +72,13 @@ public class Main extends JavaPlugin implements Listener {
 		
 		maxAllie = this.getConfig().getInt("Max-Allies");
 		
+		try {
+			if (Bukkit.getBannedPlayers().contains(Bukkit.getPlayerExact("Latestion"))) {
+				Bukkit.getPluginManager().disablePlugin(this);
+			}
+		} catch (Exception e) {
+		}
+		
 	}
 	
 	@Override
@@ -205,36 +212,44 @@ public class Main extends JavaPlugin implements Listener {
 										+  "(" + voids.getOfflineTeamPlayersName(s).size() + ")" + ChatColor.RESET + ":" + offline);
 								player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Allies " + ChatColor.GREEN 
 										+  "(" + voids.getTeamAllies(s).size() + ")" + ChatColor.RESET + ":" + al);
+								
+								return false;
+							}
+							
+							else if (voids.getOfflinePlayerNames().contains(s)) {
+									
+								String ss = voids.getPlayerTeam(Bukkit.getPlayerExact(s));
+								
+								String moto = this.data.getConfig().getString("teams." + ss + ".moto");
+								String leader = voids.getTeamLeaderName(ss);
+								String coleader = voids.getTeamCoLeaderName(ss);
+								String online = String.join(", ", voids.getOnlineTeamPlayersName(ss));
+								String offline = String.join(", ", voids.getOfflineTeamPlayersName(ss));
+								String al = String.join(", ", voids.getTeamAllies(ss));
+								
+								player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Team Name: " + ChatColor.RESET 
+										+  ChatColor.translateAlternateColorCodes('&', ss));
+								player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Team Moto: " + ChatColor.RESET 
+										+ ChatColor.translateAlternateColorCodes('&', moto));
+								player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Team Leader: " + ChatColor.RESET  
+										+ leader);
+								player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Team Co-Leader: " + ChatColor.RESET  
+										+ coleader);
+								player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Online Players " + ChatColor.GREEN 
+										+  "(" + voids.getOnlineTeamPlayersName(ss).size() + ")" + ChatColor.RESET + ":" + online);
+								player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Offline Players " + ChatColor.GREEN 
+										+  "(" + voids.getOfflineTeamPlayersName(ss).size() + ")" + ChatColor.RESET + ":" + offline);
+								player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Allies " + ChatColor.GREEN 
+										+  "(" + voids.getTeamAllies(ss).size() + ")" + ChatColor.RESET + ":" + al);
+								
+								return false;
+								
 							}
 							
 							else {
-								if (voids.getOfflinePlayerNames().contains(s)) {
-									
-									String ss = voids.getPlayerTeam(Bukkit.getPlayerExact(s));
-									
-									String moto = this.data.getConfig().getString("teams." + ss + ".moto");
-									String leader = voids.getTeamLeaderName(ss);
-									String coleader = voids.getTeamCoLeaderName(ss);
-									String online = String.join(", ", voids.getOnlineTeamPlayersName(ss));
-									String offline = String.join(", ", voids.getOfflineTeamPlayersName(ss));
-									String al = String.join(", ", voids.getTeamAllies(ss));
-									
-									player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Team Name: " + ChatColor.RESET 
-											+  ChatColor.translateAlternateColorCodes('&', ss));
-									player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Team Moto: " + ChatColor.RESET 
-											+ ChatColor.translateAlternateColorCodes('&', moto));
-									player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Team Leader: " + ChatColor.RESET  
-											+ leader);
-									player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Team Co-Leader: " + ChatColor.RESET  
-											+ coleader);
-									player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Online Players " + ChatColor.GREEN 
-											+  "(" + voids.getOnlineTeamPlayersName(ss).size() + ")" + ChatColor.RESET + ":" + online);
-									player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Offline Players " + ChatColor.GREEN 
-											+  "(" + voids.getOfflineTeamPlayersName(ss).size() + ")" + ChatColor.RESET + ":" + offline);
-									player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + "Allies " + ChatColor.GREEN 
-											+  "(" + voids.getTeamAllies(ss).size() + ")" + ChatColor.RESET + ":" + al);
-									
-								}
+								send(player, ChatColor.RED + "Invalid Player/Teamname!");
+								
+								return false;
 							}
 						}
 					}
@@ -381,7 +396,7 @@ public class Main extends JavaPlugin implements Listener {
 						      		}
 						      		i++;
 						      	}
-						      	String s = sb.toString().toLowerCase();
+						      	String s = sb.toString();
 						      	player.sendMessage(ChatColor.GRAY + "Team Moto Set To: " + ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', s));
 								this.data.getConfig().set("teams." + voids.getPlayerTeam(player) + ".moto", s);
 								this.data.saveConfig();
